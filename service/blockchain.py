@@ -3,6 +3,12 @@ import json
 import os
 from time import time
 
+
+class BlockchainService:
+    def __init__(self, repository):
+        self.repository = repository
+
+
 BLOCKCHAIN_DIR = os.curdir + "/blocks/"
 
 
