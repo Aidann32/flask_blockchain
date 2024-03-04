@@ -1,9 +1,8 @@
-from flask import Flask
 from flask import render_template, redirect, url_for
 from flask import request
-import blockchain
 
-app = Flask(__name__)
+from app import app
+from service import blockchain
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -36,7 +35,3 @@ def mining():
             blockchain.get_POW(i)
         return render_template("index.html", querry=max_index)
     return render_template("index.html")
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
