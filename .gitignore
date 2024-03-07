@@ -8,3 +8,5 @@ venv
 .venv
 
 blocks
+logs
+*.log
