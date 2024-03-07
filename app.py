@@ -2,13 +2,25 @@ from flask import Flask
 import redis
 from flask import render_template, redirect, url_for
 from flask import request
+from loguru import logger
+import logging
 
 import config
 from repository.redis.repository import RedisRepository
 from repository.file_storage.repository import FileRepository
 from service.blockchain import BlockchainService
+from utils.utils import create_folder_and_file
+
+create_folder_and_file("logger", "flask_logs.log")
+create_folder_and_file("logger", "service_logs.log")
 
 app = Flask(__name__, template_folder='web_service/templates')
+
+app.logger.setLevel(logging.INFO)
+file_handler = logging.FileHandler('logger/flask_logs.log')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+app.logger.addHandler(file_handler)
 
 try:
     storage = redis.Redis(host=config.REDIS_CONFIG['host'], port=config.REDIS_CONFIG['port'], decode_responses=config.REDIS_CONFIG['decode_responses'])
@@ -17,7 +29,8 @@ except Exception as e:
     r = FileRepository(path_to_folder=config.PATH_TO_FOLDER)
     print(e)
 
-service = BlockchainService(repository=r)
+logger.add("logger/service_logs.log", format="{time} {level} {message}", level="INFO")
+service = BlockchainService(repository=r, logger=logger)
 
 
 # def cleanup():

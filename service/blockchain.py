@@ -1,16 +1,16 @@
 import hashlib
-import json
-import os
 from time import time
 
 
 class BlockchainService:
-    def __init__(self, repository):
+    def __init__(self, repository, logger):
         self.repository = repository
         self.last_block_index = 0
         self._write_genesis_block()
+        self.logger = logger
 
     def check_blocks_integrity(self) -> list:
+        self.logger.info("Checking blocks integrity started")
         result = []
         cur_proof = -1
         for i in range(2, int(self.get_next_index())):
@@ -26,25 +26,29 @@ class BlockchainService:
                 cur_hash = block["prev_hash"]
                 cur_proof = block["proof"]
             except Exception as e:
-                print(e)
+                self.logger.error(e)
 
             try:
                 prev_hash = hashlib.sha256(
                     str(self.repository.get_block(prev_index)).encode("utf-8")
                 ).hexdigest()
             except Exception as e:
-                print(e)
+                self.logger.error(e)
 
             tmp["block"] = prev_index
             tmp["proof"] = cur_proof
             if cur_hash == prev_hash:
                 tmp["result"] = "ok"
+                self.logger.info("Integrity check passed")
             else:
                 tmp["result"] = "error"
+                self.logger.info("Integrity check failed")
             result.append(tmp)
+
         return result
 
     def check_block(self, index: int) -> dict:
+        self.logger.info(f"Checking block at index [{index}] started")
         cur_index = str(index)
         prev_index = str(int(index) - 1)
         cur_proof = -1
@@ -60,21 +64,23 @@ class BlockchainService:
             cur_hash = block["prev_hash"]
             cur_proof = block["proof"]
         except Exception as e:
-            print(e)
+            self.logger.error(e)
 
         try:
             prev_hash = hashlib.sha256(
                 str(self.repository.get_block(prev_index)).encode("utf-8")
             ).hexdigest()
         except Exception as e:
-            print(e)
+            self.logger.error(e)
 
         tmp["block"] = prev_index
         tmp["proof"] = cur_proof
         if cur_hash == prev_hash:
             tmp["result"] = "ok"
+            self.logger.info(f"Check block at index [{index}] passed")
         else:
             tmp["result"] = "error"
+            self.logger.info(f"Check block at index [{index}] failed")
         return tmp
 
     def get_hash(self, index: str) -> str:
@@ -85,12 +91,14 @@ class BlockchainService:
             raise
 
     def is_valid_proof(self, last_proof: str, proof: int, difficulty: int):
+        self.logger.info(f"Validating proof. Inputs: {last_proof}, {proof}, {difficulty}")
         guess = f"{last_proof}{proof}".encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
         return guess_hash[:difficulty] == "0" * difficulty
 
     def get_pow(self, index: int, difficulty=1) -> None:
         # POW - proof of work
+        self.logger.info(f"Getting proof of work at index [{index}]")
         last_proof = self.repository.get_block(index)["proof"]
         proof = 0
         while self.is_valid_proof(last_proof, proof, difficulty) is False:
@@ -98,12 +106,14 @@ class BlockchainService:
         cur_block = self.repository.get_block(index)
         cur_block["proof"] = proof
         cur_block["prev_hash"] = self.get_hash(str(index - 1))
+        self.logger.info(f"get_pow {cur_block}")
         self.repository.set_proof(cur_block, str(index))
 
     def get_next_index(self):
         return self.last_block_index + 1
 
     def write_block(self, data: str, make_proof=False):
+        self.logger.info(f"Writing block {data}")
         cur_index = self.get_next_index()
         prev_index = str(int(cur_index) - 1)
         prev_block_hash = self.get_hash(prev_index)
@@ -117,11 +127,10 @@ class BlockchainService:
         try:
             self.repository.write_block(cur_index, data_)
             self.last_block_index += 1
-            print(f"Last index is {self.last_block_index}")
             if make_proof:
                 self.get_pow(cur_index)
         except Exception as e:
-            print(e)
+            self.logger.error(e)
 
     def _write_genesis_block(self):
         data_ = {
