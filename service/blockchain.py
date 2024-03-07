@@ -8,6 +8,7 @@ class BlockchainService:
     def __init__(self, repository):
         self.repository = repository
         self.last_block_index = 0
+        self._write_genesis_block()
 
     def check_blocks_integrity(self) -> list:
         result = []
@@ -97,7 +98,7 @@ class BlockchainService:
         cur_block = self.repository.get_block(index)
         cur_block["proof"] = proof
         cur_block["prev_hash"] = self.get_hash(str(index - 1))
-        self.repository.set_proof(cur_block)
+        self.repository.set_proof(cur_block, str(index))
 
     def get_next_index(self):
         return self.last_block_index + 1
@@ -116,7 +117,18 @@ class BlockchainService:
         try:
             self.repository.write_block(cur_index, data_)
             self.last_block_index += 1
+            print(f"Last index is {self.last_block_index}")
             if make_proof:
                 self.get_pow(cur_index)
         except Exception as e:
             print(e)
+
+    def _write_genesis_block(self):
+        data_ = {
+            "text": "Genesis",
+            "prev_hash": 0,
+            "timestamp": time(),
+            "proof": -1,
+            "index": 0,
+        }
+        self.repository.write_block(0, data_)

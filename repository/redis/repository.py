@@ -30,6 +30,7 @@ class RedisRepository:
         self.redis.hset(index, mapping=block)
 
     def write_block(self, next_index: str,  data: dict):
+        print(f"Writing data {data}")
         self.redis.hset(next_index, mapping=data)
 
     def delete_all_keys(self):
