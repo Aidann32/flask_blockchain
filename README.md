@@ -32,4 +32,5 @@ python server.py
 
 Now head over to http://127.0.0.1:5000/, and you should see main page of blockchain, where you can add new block, check blocks integrity and mined blocks using POW algorithm.
 
-
+Run Redis command
+sudo service redis-server start

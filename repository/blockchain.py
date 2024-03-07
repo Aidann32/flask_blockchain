@@ -1,3 +1,19 @@
+class BlockchainRepository:
+    def __init__(self, repos):
+        self.repository = repos
+
+    def get_hash(self):
+        pass
+
+    def get_block(self):
+        pass
+
+    def get_POW(self):
+        pass
+
+    def write_block(self):
+        pass
+
 # def get_hash(file_name):
 #     file_name = str(file_name)
 #     if not file_name.endswith(".json"):
