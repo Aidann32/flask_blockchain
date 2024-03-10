@@ -1,48 +1,77 @@
 {% extends "base.html" %} {% block content %}
-<form action="{{ url_for('index') }}" method="POST">
-    <div class="form-group">
-        <label for="text">Ваши данные</label>
-        <input type="text" class="form-control" id="text" placeholder="Разместите свои данные" name="text"
-            value="{{ request.form.get('text', '') }}" required>
+    <div class="row">
+        <div class="col-lg-8 mx-auto mt-5">
+            <h3>Добавить новый блок: <span class="badge badge-secondary">Блоки сохранются в .json файлах</span></h3>
+        </div>
     </div>
+    <form action="{{ url_for('index') }}" method="POST">
+        <div class="form-group">
+            <label for="text">Ваши данные</label>
+            <input type="text" class="form-control" id="text" placeholder="Разместите свои данные" name="text"
+                   value="{{ request.form.get('text', '') }}" required>
+        </div>
 
-    <div class="form-check">
-        <label class="form-check-label">
-            <input type="checkbox" class="form-check-input" name="make_proof">
-            через POW
-        </label>
-    </div>
+        <div class="form-check">
+            <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" name="make_proof">
+                через POW
+            </label>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Отправить</button>
+    </form>
     <br>
-    <button type="submit" class="btn btn-primary btn-lg btn-block">Отправить</button>
-</form>
-<br>
-<hr> {% endblock %} {% block check %}
-<form action="{{ url_for('integrity') }}" method="POST">
-    <button type="submit" class="btn btn-primary btn-lg btn-block">Проверить целостность</button>
-</form>
-<hr>
-<ul class="list-group">
-    {% for result in results %}
-    <li class="list-group-item"> Block {{result['block'] }} : {% if result['result'] == 'ok' %}
-        <i>Все цело!</i> {% endif %} {% if result['result'] == 'error' %}
-        <strong> повреждено!</strong> {% endif %} {% if result['proof'] != -1 %}
-        <i>смайнено!</i> {% endif %} {% if result['proof'] == -1 %}
-        <strong>не смайнено!</strong> {% endif %}
+    <hr>
 
-    </li>
-    {% endfor %}
-</ul>
-<br> {% endblock %}
-<hr> {% block mining %}
-<form action="{{ url_for('mining') }}" method="POST">
-    <button type="submit" class="btn btn-primary btn-lg btn-block">Майнить</button>
-</form>
-{% if querry %}
-<hr>
-<div class="alert alert-success" role="alert">
-    <strong>Успех!</strong> Смайнено!
-</div>
-<hr><br> {% endif %}
+    <hr>
+    <div class="content container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto mt-5">
+                <h3>Проверка целостности блоков: <span
+                        class="badge badge-secondary">Если блоки были изменены вручную</span></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 mx-auto mt-5">
+                <form action="{{ url_for('integrity') }}" method="POST">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">Проверить целостность</button>
+                </form>
+                <hr>
+                <ul class="list-group">
+                    {% for result in results %}
+                        <li class="list-group-item"> Block {{ result['block'] }} : {% if result['result'] == 'ok' %}
+                            <i>Все цело!</i> {% endif %} {% if result['result'] == 'error' %}
+                            <strong> повреждено!</strong> {% endif %} {% if result['proof'] != -1 %}
+                            <i>смайнено!</i> {% endif %} {% if result['proof'] == -1 %}
+                            <strong>не смайнено!</strong> {% endif %}
 
+                        </li>
+                    {% endfor %}
+                </ul>
+                <br>
+            </div>
+        </div>
+    </div>
+    <div class="content container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto mt-5">
+                <h3>Майнить <span class="badge badge-secondary">Через POW</span></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 mx-auto mt-5">
+                <form action="{{ url_for('mining') }}" method="POST">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">Майнить</button>
+                </form>
+                {% if querry %}
+                    <hr>
+                    <div class="alert alert-success" role="alert">
+                        <strong>Успех!</strong> Смайнено!
+                    </div>
+                    <hr><br> {% endif %}
 
-<br><br><br> {% endblock %}
+                <br><br><br>
+            </div>
+        </div>
+    </div>
+{% endblock %}

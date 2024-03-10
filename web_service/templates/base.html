@@ -22,44 +22,11 @@
     <div class="content container">
         <div class="row">
             <div class="col-lg-8 mx-auto mt-5">
-                <h3>Добавить новый блок: <span class="badge badge-secondary">Блоки сохранются в .json файлах</span></h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-8 mx-auto mt-5">
                 {% block content %}
                 <p>Пустая страница!</p>
                 {% endblock %}
             </div>
         </div>
     </div>
-
-    <div class="content container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto mt-5">
-                <h3>Проверка целостности блоков: <span class="badge badge-secondary">Если блоки были изменены вручную</span></h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-8 mx-auto mt-5">
-                {% block check %}{% endblock %}
-            </div>
-        </div>
-    </div>
-
-
-    <div class="content container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto mt-5">
-                <h3>Майнить <span class="badge badge-secondary">Через POW</span></h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-8 mx-auto mt-5">
-                {% block mining %}{% endblock %}
-            </div>
-        </div>
-    </div>
 </body>
-
 </html>

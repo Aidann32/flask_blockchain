@@ -9,6 +9,11 @@ class BlockchainService:
         self._write_genesis_block()
         self.logger = logger
 
+    def get_last_index(self) -> int:
+        if self.last_block_index == 0:
+            return None
+        return self.last_block_index
+
     def check_blocks_integrity(self) -> list:
         self.logger.info("Checking blocks integrity started")
         result = []
@@ -90,7 +95,7 @@ class BlockchainService:
             print("Error!")
             raise
 
-    def is_valid_proof(self, last_proof: str, proof: int, difficulty: int):
+    def is_valid_proof(self, last_proof: str, proof: int, difficulty: int) -> bool:
         self.logger.info(f"Validating proof. Inputs: {last_proof}, {proof}, {difficulty}")
         guess = f"{last_proof}{proof}".encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
@@ -109,10 +114,10 @@ class BlockchainService:
         self.logger.info(f"get_pow {cur_block}")
         self.repository.set_proof(cur_block, str(index))
 
-    def get_next_index(self):
+    def get_next_index(self) -> int:
         return self.last_block_index + 1
 
-    def write_block(self, data: str, make_proof=False):
+    def write_block(self, data: [str, dict], make_proof=False) -> None:
         self.logger.info(f"Writing block {data}")
         cur_index = self.get_next_index()
         prev_index = str(int(cur_index) - 1)
@@ -132,7 +137,13 @@ class BlockchainService:
         except Exception as e:
             self.logger.error(e)
 
-    def _write_genesis_block(self):
+    def delete_block(self, index: int) -> None:
+        self.repository.delete_block(index)
+
+    def get_block(self, index: int) -> dict:
+        return self.repository.get_block(str(index))
+
+    def _write_genesis_block(self) -> None:
         data_ = {
             "text": "Genesis",
             "prev_hash": 0,

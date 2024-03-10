@@ -37,4 +37,3 @@ class RedisRepository:
         keys = self.redis.keys()
         if keys:
             self.redis.delete(*keys)
-
