@@ -1,4 +1,5 @@
 import hashlib
+import json
 from time import time
 from redis import Redis
 from typing import List
@@ -23,15 +24,15 @@ class RedisRepository:
             raise KeyError("Block not found")
         return last_block
 
-    def get_block(self, block_index: str):
-        return self.redis.hgetall(block_index)
+    def get_block(self, block_index: str) -> dict:
+        data = self.redis.get(block_index)
+        return json.loads(data)
 
-    def set_proof(self, block: dict, index: str):
-        self.redis.hset(index, mapping=block)
+    def set_proof(self, block: str, index: str):
+        self.redis.set(index, block)
 
-    def write_block(self, next_index: str,  data: dict):
-        print(f"Writing data {data}")
-        self.redis.hset(next_index, mapping=data)
+    def write_block(self, next_index: str,  data: str):
+        self.redis.set(next_index, data)
 
     def delete_all_keys(self):
         keys = self.redis.keys()

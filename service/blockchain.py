@@ -1,4 +1,5 @@
 import hashlib
+import json
 from time import time
 
 
@@ -6,6 +7,7 @@ class BlockchainService:
     def __init__(self, repository, logger):
         self.repository = repository
         self.last_block_index = 0
+        self.repository.delete_all_keys()
         self._write_genesis_block()
         self.logger = logger
 
@@ -112,6 +114,7 @@ class BlockchainService:
         cur_block["proof"] = proof
         cur_block["prev_hash"] = self.get_hash(str(index - 1))
         self.logger.info(f"get_pow {cur_block}")
+        cur_block = json.dumps(cur_block)
         self.repository.set_proof(cur_block, str(index))
 
     def get_next_index(self) -> int:
@@ -123,12 +126,13 @@ class BlockchainService:
         prev_index = str(int(cur_index) - 1)
         prev_block_hash = self.get_hash(prev_index)
         data_ = {
-            "text": data,
+            "data": data,
             "prev_hash": prev_block_hash,
             "timestamp": time(),
             "proof": -1,
             "index": cur_index,
         }
+        data_ = json.dumps(data_)
         try:
             self.repository.write_block(cur_index, data_)
             self.last_block_index += 1
@@ -151,4 +155,5 @@ class BlockchainService:
             "proof": -1,
             "index": 0,
         }
+        data_ = json.dumps(data_)
         self.repository.write_block(0, data_)

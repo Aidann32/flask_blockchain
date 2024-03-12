@@ -46,9 +46,9 @@ queue_service = QueueService(service)
 @app.route("/queue", methods=["GET", "POST"])
 def queue_index():
     if request.method == "POST":
-        if 'file' not in request.files:
+        if 'document' not in request.files:
             return "File is not uploaded", 400
-        file = request.files['file']
+        file = request.files['document']
         text = ""
         if file.filename == '':
             return "No selected file", 400
@@ -63,13 +63,13 @@ def queue_index():
         last_name = request.form["last_name"]
         iin = request.form["iin"]
         phone_number = request.form["phone_number"]
-        longtitude = float(request.form["longtitude"])
+        longitude = float(request.form["longitude"])
         latitude = float(request.form["latitude"])
         area = float(request.form["area"])
         state = request.form["state"]
         soil_type = request.form["soil_type"]
 
-        location = Location(longitude=longtitude, latitude=latitude)
+        location = Location(longitude=longitude, latitude=latitude)
         applicant = Applicant(first_name=first_name, last_name=last_name, iin=iin, phone_number=phone_number)
         land_plot = LandPlot(area=area, location=location, state=state, soil_type=soil_type)
         queue_request = QueueRequest(document_hash=document_hash, land=land_plot, applicant=applicant)
