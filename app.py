@@ -3,6 +3,7 @@ import redis
 from flask import render_template, redirect, url_for, request, abort, Flask
 from loguru import logger
 import logging
+import atexit
 
 import config
 from repository.redis.repository import RedisRepository
@@ -34,14 +35,17 @@ logger.add("logger/service_logs.log", format="{time} {level} {message}", level="
 service = BlockchainService(repository=r, logger=logger)
 queue_service = QueueService(service)
 
+if config.DEBUG:
+    from populate_blockchain import populate_blockchain
+    populate_blockchain(queue_service)
 
-# def cleanup():
-#     r.delete_all_keys()
-#
-#
-# @app.teardown_appcontext
-# def teardown_appcontext(error=None):
-#     cleanup()
+
+def cleanup():
+    r.delete_all_keys()
+
+
+atexit.register(cleanup)
+
 
 @app.route("/queue", methods=["GET", "POST"])
 def queue_index():

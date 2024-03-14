@@ -1,5 +1,6 @@
 import os
 
+DEBUG = True
 PATH_TO_FOLDER = f'{os.curdir}/blocks/'
 REDIS_CONFIG = {
     'host': 'localhost',
