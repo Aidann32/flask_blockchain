@@ -1,5 +1,5 @@
 from dataclasses import dataclass, asdict
-
+from datetime import date
 
 @dataclass
 class Location:
@@ -37,6 +37,8 @@ class QueueRequest:
     land: LandPlot
     applicant: Applicant
     document_hash: str
+    place: int
+    removed_at: date
 
     def to_dict(self) -> dict:
         return asdict(self)

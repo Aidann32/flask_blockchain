@@ -4,6 +4,7 @@ from flask import render_template, redirect, url_for, request, abort, Flask
 from loguru import logger
 import logging
 import atexit
+from datetime import date
 
 import config
 from repository.redis.repository import RedisRepository
@@ -76,7 +77,8 @@ def queue_index():
         location = Location(longitude=longitude, latitude=latitude)
         applicant = Applicant(first_name=first_name, last_name=last_name, iin=iin, phone_number=phone_number)
         land_plot = LandPlot(area=area, location=location, state=state, soil_type=soil_type)
-        queue_request = QueueRequest(document_hash=document_hash, land=land_plot, applicant=applicant)
+        place = queue_service.place + 1
+        queue_request = QueueRequest(document_hash=document_hash, land=land_plot, applicant=applicant, removed_at=None, place=place)
         queue_service.enqueue(queue_request.to_dict())
         return redirect(url_for("queue_index"))
     return render_template("queue/index.html")
@@ -84,6 +86,10 @@ def queue_index():
 
 @app.route("/dequeue", methods=["POST"])
 def dequeue():
+    pass
+
+@app.route("/queue_view", methods=["GET", "POST"])
+def queue_view():
     pass
 
 
@@ -122,3 +128,8 @@ def mining():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+# TODO: Search block by document hash
+# TODO: Display in HTML
+# TODO: Remove block by blockchain logic

@@ -36,15 +36,30 @@
             </div>
             <div class="form-group">
                 <label for="state">Область:</label>
-                <input type="text" class="form-control" id="state" name="state" required>
+                <select class="form-control" name="state" id="state" required>
+                  <option value="almaty">Алматы</option>
+                  <option value="aqtobe">Актобе</option>
+                  <option value="astana">Астана</option>
+                  <option value="atyrau">Атырау</option>
+                  <option value="east_kazakhstan">Восточно-Казахстанская область</option>
+                  <option value="jambyl">Жамбылская область</option>
+                  <option value="west_kazakhstan">Западно-Казахстанская область</option>
+                  <option value="karagandy">Карагандинская область</option>
+                  <option value="kostanay">Костанайская область</option>
+                  <option value="kyzylorda">Кызылординская область</option>
+                  <option value="mangystau">Мангистауская область</option>
+                  <option value="pavlodar">Павлодарская область</option>
+                  <option value="north_kazakhstan">Северо-Казахстанская область</option>
+                  <option value="turkistan">Туркестанская область</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="soil_type">Тип почвы:</label>
                 <select class="form-control" id="soil_type" name="soil_type" required>
-                    <option value="volvo">Volvo</option>
-                    <option value="saab">Saab</option>
-                    <option value="mercedes">Mercedes</option>
-                    <option value="audi">Audi</option>
+                    <option value="forest_steppe">Лесостепь</option>
+                    <option value="steppe">Степь</option>
+                    <option value="desert_steppe">Пустынно-степь</option>
+                    <option value="desert">Пустыня</option>
                 </select>
             </div>
             <!-- Add fields for other attributes of LandPlot and Location here -->

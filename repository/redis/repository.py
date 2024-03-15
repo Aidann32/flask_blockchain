@@ -2,7 +2,7 @@ import hashlib
 import json
 from time import time
 from redis import Redis
-from typing import List
+from typing import Dict
 
 
 class RedisRepository:
@@ -38,3 +38,27 @@ class RedisRepository:
         keys = self.redis.keys()
         if keys:
             self.redis.delete(*keys)
+
+    def get_all_blocks(self) -> dict:
+        keys = self.redis.keys()
+        result = {}
+        for key in keys:
+            value = self.redis.get(key)
+            try:
+                result[key] = json.loads(value)
+            except json.JSONDecodeError:
+                result[key] = value
+
+        return result
+
+    def find_key_by_document_hash(self, document_hash: str) -> dict:
+        keys = self.redis.keys()
+        for key in keys:
+            # Получаем значение, связанное с ключом, и декодируем его из JSON
+            data_str = self.redis.get(key).decode('utf-8')
+            data = json.loads(data_str)
+            request_data = data.get('data')
+            if request_data.get('document_hash') == document_hash:
+                return key.decode('utf-8')
+
+        return dict()

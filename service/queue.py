@@ -4,6 +4,7 @@ from service.blockchain import BlockchainService
 class QueueService:
     def __init__(self, blockchain_service: BlockchainService):
         self.blockchain_service = blockchain_service
+        self.place = 0
 
     def enqueue(self, data: dict) -> None:
         self.blockchain_service.write_block(data, True)
