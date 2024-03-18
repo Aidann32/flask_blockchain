@@ -14,3 +14,6 @@ class QueueService:
         result = self.blockchain_service.get_block(last_index)
         # self.blockchain_service.delete_block(last_index)
         return result
+
+    def find_key_by_document_hash(self, document_hash: str) -> dict:
+        return self.blockchain_service.find_key_by_document_hash(document_hash)

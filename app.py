@@ -26,14 +26,17 @@ file_handler.setFormatter(formatter)
 app.logger.addHandler(file_handler)
 
 try:
-    storage = redis.Redis(host=config.REDIS_CONFIG['host'], port=config.REDIS_CONFIG['port'], decode_responses=config.REDIS_CONFIG['decode_responses'])
+    storage = redis.Redis(host=config.REDIS_CONFIG['host'], db=config.REDIS_CONFIG['queue_db_num'], port=config.REDIS_CONFIG['port'], decode_responses=config.REDIS_CONFIG['decode_responses'])
+    demo_storage = redis.Redis(host=config.REDIS_CONFIG['host'], db=config.REDIS_CONFIG['demo_db_num'], port=config.REDIS_CONFIG['port'], decode_responses=config.REDIS_CONFIG['decode_responses'])
     r = RedisRepository(storage)
+    demo_repository = RedisRepository(demo_storage)
 except Exception as e:
     r = FileRepository(path_to_folder=config.PATH_TO_FOLDER)
     print(e)
 
 logger.add("logger/service_logs.log", format="{time} {level} {message}", level="INFO")
 service = BlockchainService(repository=r, logger=logger)
+demo_service = BlockchainService(repository=demo_repository, logger=logger)
 queue_service = QueueService(service)
 
 if config.DEBUG:
@@ -48,8 +51,13 @@ def cleanup():
 atexit.register(cleanup)
 
 
-@app.route("/queue", methods=["GET", "POST"])
-def queue_index():
+@app.route("/queue", methods=["GET"])
+def queue_main():
+    return render_template("queue/index.html")
+
+
+@app.route("/queue/request", methods=["GET", "POST"])
+def queue_request():
     if request.method == "POST":
         if 'document' not in request.files:
             return "File is not uploaded", 400
@@ -78,10 +86,21 @@ def queue_index():
         applicant = Applicant(first_name=first_name, last_name=last_name, iin=iin, phone_number=phone_number)
         land_plot = LandPlot(area=area, location=location, state=state, soil_type=soil_type)
         place = queue_service.place + 1
-        queue_request = QueueRequest(document_hash=document_hash, land=land_plot, applicant=applicant, removed_at=None, place=place)
+        queue_request = QueueRequest(document_hash=document_hash, land=land_plot, applicant=applicant, place=place, removed_at=None)
         queue_service.enqueue(queue_request.to_dict())
+        queue_service.place += 1
         return redirect(url_for("queue_index"))
-    return render_template("queue/index.html")
+    return render_template("queue/request_form.html")
+
+
+@app.route("/queue/search", methods=["GET", "POST"])
+def search_request():
+    if request.method == "POST":
+        document_hash = request.form["document_hash"]
+        request_block = queue_service.find_key_by_document_hash(document_hash)
+        print(request_block)
+        return render_template("queue/search_request.html", request_block=request_block)
+    return render_template("queue/search_request.html")
 
 
 @app.route("/dequeue", methods=["POST"])
@@ -101,15 +120,14 @@ def index():
             return redirect(url_for("index"))
 
         make_proof = request.form.get("make_proof", False)
-        service.write_block(text, make_proof)
+        demo_service.write_block(text, make_proof)
         return redirect(url_for("index"))
     return render_template("index.html")
 
 
 @app.route("/check", methods=["POST"])
 def integrity():
-    results = service.check_blocks_integrity()
-    print(results)
+    results = demo_service.check_blocks_integrity()
     if request.method == "POST":
         return render_template("index.html", results=results)
     return render_template("index.html")
@@ -118,10 +136,9 @@ def integrity():
 @app.route("/mining", methods=["POST"])
 def mining():
     if request.method == "POST":
-        max_index = int(service.get_next_index())
-        print(max_index)
+        max_index = int(demo_service.get_next_index())
         for i in range(2, max_index):
-            service.get_pow(i)
+            demo_service.get_pow(i)
         return render_template("index.html", querry=max_index)
     return render_template("index.html")
 
@@ -133,3 +150,5 @@ if __name__ == "__main__":
 # TODO: Search block by document hash
 # TODO: Display in HTML
 # TODO: Remove block by blockchain logic
+# TODO: Add statuses to request
+# TODO: Add validation when adding request(If request with IIN exists, if request is on right place)

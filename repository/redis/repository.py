@@ -1,8 +1,6 @@
 import hashlib
 import json
-from time import time
 from redis import Redis
-from typing import Dict
 
 
 class RedisRepository:
@@ -54,9 +52,9 @@ class RedisRepository:
     def find_key_by_document_hash(self, document_hash: str) -> dict:
         keys = self.redis.keys()
         for key in keys:
-            # Получаем значение, связанное с ключом, и декодируем его из JSON
-            data_str = self.redis.get(key).decode('utf-8')
+            data_str = self.redis.get(key)
             data = json.loads(data_str)
+            print(data)
             request_data = data.get('data')
             if request_data.get('document_hash') == document_hash:
                 return key.decode('utf-8')

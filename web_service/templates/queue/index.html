@@ -1,74 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
      <div class="container mb-5">
-        <h1>Форма заявления на получение земельного участка</h1>
-        <form method="POST" enctype="multipart/form-data">
-            <h2>Данные заявителя</h2>
-            <div class="form-group">
-                <label for="first_name">Имя:</label>
-                <input type="text" class="form-control" id="first_name" name="first_name" required>
-            </div>
-            <div class="form-group">
-                <label for="last_name">Фамилия:</label>
-                <input type="text" class="form-control" id="last_name" name="last_name" required>
-            </div>
-            <div class="form-group">
-                <label for="iin">ИИН (Individual Identification Number):</label>
-                <input type="text" class="form-control" id="iin" name="iin" required>
-            </div>
-            <div class="form-group">
-                <label for="phone_number">Номер телефона:</label>
-                <input type="text" class="form-control" id="phone_number" name="phone_number" required>
-            </div>
-            <hr/>
-            <h2>Данные по земельному участку</h2>
-            <div class="form-group">
-                <label for="longitude">Ширина:</label>
-                <input type="number" class="form-control" id="longitude" name="longitude" required>
-            </div>
-            <div class="form-group">
-                <label for="latitude">Долгота:</label>
-                <input type="number" class="form-control" id="latitude" name="latitude" required>
-            </div>
-            <div class="form-group">
-                <label for="area">Площадь:</label>
-                <input type="number" class="form-control" id="area" name="area" required>
-            </div>
-            <div class="form-group">
-                <label for="state">Область:</label>
-                <select class="form-control" name="state" id="state" required>
-                  <option value="almaty">Алматы</option>
-                  <option value="aqtobe">Актобе</option>
-                  <option value="astana">Астана</option>
-                  <option value="atyrau">Атырау</option>
-                  <option value="east_kazakhstan">Восточно-Казахстанская область</option>
-                  <option value="jambyl">Жамбылская область</option>
-                  <option value="west_kazakhstan">Западно-Казахстанская область</option>
-                  <option value="karagandy">Карагандинская область</option>
-                  <option value="kostanay">Костанайская область</option>
-                  <option value="kyzylorda">Кызылординская область</option>
-                  <option value="mangystau">Мангистауская область</option>
-                  <option value="pavlodar">Павлодарская область</option>
-                  <option value="north_kazakhstan">Северо-Казахстанская область</option>
-                  <option value="turkistan">Туркестанская область</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="soil_type">Тип почвы:</label>
-                <select class="form-control" id="soil_type" name="soil_type" required>
-                    <option value="forest_steppe">Лесостепь</option>
-                    <option value="steppe">Степь</option>
-                    <option value="desert_steppe">Пустынно-степь</option>
-                    <option value="desert">Пустыня</option>
-                </select>
-            </div>
-            <!-- Add fields for other attributes of LandPlot and Location here -->
-            <div class="form-group">
-                <label for="document">Документ:</label>
-                <input type="file" class="form-control" name="document" id="document" accept=".docx" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Отправить</button>
-        </form>
+        <h1>Платформа заявок на очередь на земельный участок</h1>
+        <div class="container">
+          <ul class="list-group">
+            <li class="list-group-item"><a href="{{ url_for('queue_request') }}">Подать заявку</a></li>
+            <li class="list-group-item"><a href="{{ url_for('search_request') }}">Просмотреть очередь</a></li>
+            <li class="list-group-item"><a href="{{ url_for('queue_request') }}">Подтвердить получение земли</a></li>
+          </ul>
+        </div>
     </div>
-
 {% endblock %}

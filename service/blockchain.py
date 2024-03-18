@@ -157,3 +157,6 @@ class BlockchainService:
         }
         data_ = json.dumps(data_)
         self.repository.write_block(0, data_)
+
+    def find_key_by_document_hash(self, document_hash: str) -> dict:
+        return self.repository.find_key_by_document_hash(document_hash)
