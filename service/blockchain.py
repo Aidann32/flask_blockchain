@@ -93,9 +93,8 @@ class BlockchainService:
     def get_hash(self, index: str) -> str:
         try:
             return hashlib.sha256(str(self.repository.get_block(index)).encode("utf-8")).hexdigest()
-        except Exception:
-            print("Error!")
-            raise
+        except Exception as e:
+            raise Exception(f"Hashing error: {e}")
 
     def is_valid_proof(self, last_proof: str, proof: int, difficulty: int) -> bool:
         self.logger.info(f"Validating proof. Inputs: {last_proof}, {proof}, {difficulty}")

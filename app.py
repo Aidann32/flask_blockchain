@@ -98,7 +98,6 @@ def search_request():
     if request.method == "POST":
         document_hash = request.form["document_hash"]
         request_block = queue_service.find_key_by_document_hash(document_hash)
-        print(request_block)
         return render_template("queue/search_request.html", request_block=request_block)
     return render_template("queue/search_request.html")
 
@@ -147,8 +146,8 @@ if __name__ == "__main__":
     app.run(debug=True)
 
 
-# TODO: Search block by document hash
-# TODO: Display in HTML
+# TODO: Add navbar
+# TODO: Split to blueprints
 # TODO: Remove block by blockchain logic
 # TODO: Add statuses to request
 # TODO: Add validation when adding request(If request with IIN exists, if request is on right place)
