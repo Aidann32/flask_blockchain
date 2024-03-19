@@ -1,21 +1,18 @@
-import hashlib
 import redis
-from flask import render_template, redirect, url_for, request, abort, Flask
+from flask import Flask, render_template
 from loguru import logger
 import logging
 import atexit
-from datetime import date
 
 import config
 from repository.redis.repository import RedisRepository
 from repository.file_storage.repository import FileRepository
 from service.blockchain import BlockchainService
 from service.queue import QueueService
-from utils.utils import create_folder_and_file, extract_text_from_docx
-from models.queue import *
+# from utils.utils import create_folder_and_file
 
-create_folder_and_file("logger", "flask_logs.log")
-create_folder_and_file("logger", "service_logs.log")
+# create_folder_and_file("logger", "flask_logs.log")
+# create_folder_and_file("logger", "service_logs.log")
 
 app = Flask(__name__, template_folder='web_service/templates')
 
@@ -51,103 +48,11 @@ def cleanup():
 atexit.register(cleanup)
 
 
-@app.route("/queue", methods=["GET"])
-def queue_main():
-    return render_template("queue/index.html")
+@app.route("/", methods=['GET'])
+def main():
+    return render_template('index.html')
 
 
-@app.route("/queue/request", methods=["GET", "POST"])
-def queue_request():
-    if request.method == "POST":
-        if 'document' not in request.files:
-            return "File is not uploaded", 400
-        file = request.files['document']
-        text = ""
-        if file.filename == '':
-            return "No selected file", 400
-        if file:
-            text = extract_text_from_docx(file)
-
-        if not text:
-            return "File is empty", 400
-
-        document_hash = hashlib.sha256(text.encode()).hexdigest()
-        first_name = request.form["first_name"]
-        last_name = request.form["last_name"]
-        iin = request.form["iin"]
-        phone_number = request.form["phone_number"]
-        longitude = float(request.form["longitude"])
-        latitude = float(request.form["latitude"])
-        area = float(request.form["area"])
-        state = request.form["state"]
-        soil_type = request.form["soil_type"]
-
-        location = Location(longitude=longitude, latitude=latitude)
-        applicant = Applicant(first_name=first_name, last_name=last_name, iin=iin, phone_number=phone_number)
-        land_plot = LandPlot(area=area, location=location, state=state, soil_type=soil_type)
-        place = queue_service.place + 1
-        queue_request = QueueRequest(document_hash=document_hash, land=land_plot, applicant=applicant, place=place, removed_at=None)
-        queue_service.enqueue(queue_request.to_dict())
-        queue_service.place += 1
-        return redirect(url_for("queue_index"))
-    return render_template("queue/request_form.html")
-
-
-@app.route("/queue/search", methods=["GET", "POST"])
-def search_request():
-    if request.method == "POST":
-        document_hash = request.form["document_hash"]
-        request_block = queue_service.find_key_by_document_hash(document_hash)
-        return render_template("queue/search_request.html", request_block=request_block)
-    return render_template("queue/search_request.html")
-
-
-@app.route("/dequeue", methods=["POST"])
-def dequeue():
-    pass
-
-@app.route("/queue_view", methods=["GET", "POST"])
-def queue_view():
-    pass
-
-
-@app.route("/", methods=["GET", "POST"])
-def index():
-    if request.method == "POST":
-        text = request.form["text"]
-        if len(text) < 1:
-            return redirect(url_for("index"))
-
-        make_proof = request.form.get("make_proof", False)
-        demo_service.write_block(text, make_proof)
-        return redirect(url_for("index"))
-    return render_template("index.html")
-
-
-@app.route("/check", methods=["POST"])
-def integrity():
-    results = demo_service.check_blocks_integrity()
-    if request.method == "POST":
-        return render_template("index.html", results=results)
-    return render_template("index.html")
-
-
-@app.route("/mining", methods=["POST"])
-def mining():
-    if request.method == "POST":
-        max_index = int(demo_service.get_next_index())
-        for i in range(2, max_index):
-            demo_service.get_pow(i)
-        return render_template("index.html", querry=max_index)
-    return render_template("index.html")
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
-
-# TODO: Add navbar
-# TODO: Split to blueprints
 # TODO: Remove block by blockchain logic
 # TODO: Add statuses to request
 # TODO: Add validation when adding request(If request with IIN exists, if request is on right place)

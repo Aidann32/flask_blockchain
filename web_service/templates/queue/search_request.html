@@ -2,7 +2,7 @@
 {% block content %}
     <div class="container mb-5">
         <h1>Поиск заявки по хэшу документа</h1>
-        <form class="form-inline my-2 my-lg-0" method="POST" action="{{ url_for('search_request') }}">
+        <form class="form-inline my-2 my-lg-0" method="POST" action="{{ url_for('queue.search_request') }}">
             <input class="form-control mr-sm-2" type="search" placeholder="Хэш документа" aria-label="Search"
                    name="document_hash">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Искать</button>

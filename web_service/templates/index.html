@@ -1,77 +1,48 @@
-{% extends "base.html" %} {% block content %}
-    <div class="row">
-        <div class="col-lg-8 mx-auto mt-5">
-            <h3>Добавить новый блок: <span class="badge badge-secondary">Блоки сохранются в .json файлах</span></h3>
-        </div>
-    </div>
-    <form action="{{ url_for('index') }}" method="POST">
-        <div class="form-group">
-            <label for="text">Ваши данные</label>
-            <input type="text" class="form-control" id="text" placeholder="Разместите свои данные" name="text"
-                   value="{{ request.form.get('text', '') }}" required>
-        </div>
+{% extends 'base.html' %}
+{% block content %}
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
 
-        <div class="form-check">
-            <label class="form-check-label">
-                <input type="checkbox" class="form-check-input" name="make_proof">
-                через POW
-            </label>
-        </div>
-        <br>
-        <button type="submit" class="btn btn-primary btn-lg btn-block">Отправить</button>
-    </form>
-    <br>
-    <hr>
+        .menu-container {
+            max-width: 600px;
+            margin: 50px auto;
+        }
 
-    <hr>
-    <div class="content container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto mt-5">
-                <h3>Проверка целостности блоков: <span
-                        class="badge badge-secondary">Если блоки были изменены вручную</span></h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-8 mx-auto mt-5">
-                <form action="{{ url_for('integrity') }}" method="POST">
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">Проверить целостность</button>
-                </form>
-                <hr>
-                <ul class="list-group">
-                    {% for result in results %}
-                        <li class="list-group-item"> Block {{ result['block'] }} : {% if result['result'] == 'ok' %}
-                            <i>Все цело!</i> {% endif %} {% if result['result'] == 'error' %}
-                            <strong> повреждено!</strong> {% endif %} {% if result['proof'] != -1 %}
-                            <i>смайнено!</i> {% endif %} {% if result['proof'] == -1 %}
-                            <strong>не смайнено!</strong> {% endif %}
+        .menu-item {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
 
-                        </li>
-                    {% endfor %}
-                </ul>
-                <br>
-            </div>
-        </div>
-    </div>
-    <div class="content container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto mt-5">
-                <h3>Майнить <span class="badge badge-secondary">Через POW</span></h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-8 mx-auto mt-5">
-                <form action="{{ url_for('mining') }}" method="POST">
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">Майнить</button>
-                </form>
-                {% if querry %}
-                    <hr>
-                    <div class="alert alert-success" role="alert">
-                        <strong>Успех!</strong> Смайнено!
-                    </div>
-                    <hr><br> {% endif %}
+        .menu-item:hover {
+            background-color: #f1f1f1;
+        }
 
-                <br><br><br>
-            </div>
+        .menu-link {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #212529;
+        }
+
+        .menu-link:hover {
+            text-decoration: none;
+            color: #212529;
+        }
+    </style>
+    <h1>Платформа на основе блокчейн для ведения очереди на земельные участки</h1>
+    <p>
+        Здесь вы можете перейти либо в сам блокчейн и попробовать добавить данные в блокчейн и смайниить блоки.
+        Во втором приложении вы можете попробовать подать заявку на земельный участок.
+    </p>
+    <div class="menu-container">
+        <div class="menu-item">
+            <a class="menu-link" href="{{ url_for('queue.queue_main') }}">Очередь на земельный участок</a>
+        </div>
+        <div class="menu-item">
+            <a class="menu-link" href="{{ url_for('blockchain.index') }}">Блокчейн</a>
         </div>
     </div>
 {% endblock %}
