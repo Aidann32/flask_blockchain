@@ -7,11 +7,14 @@ class QueueService:
         self.place = 0
 
     def enqueue(self, data: dict) -> None:
+        # Validation
+        self.place += 1
         self.blockchain_service.write_block(data, True)
 
     def dequeue(self):
         last_index = self.blockchain_service.get_last_index()
         result = self.blockchain_service.get_block(last_index)
+
         # self.blockchain_service.delete_block(last_index)
         return result
 

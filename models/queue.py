@@ -1,5 +1,7 @@
 from dataclasses import dataclass, asdict
 from datetime import date
+from enum import Enum
+
 
 @dataclass
 class Location:
@@ -32,12 +34,18 @@ class LandPlot:
         return asdict(self)
 
 
+class Status(Enum):
+    ISSUED = "issued"
+    PENDING = "pending"
+
+
 @dataclass
 class QueueRequest:
     land: LandPlot
     applicant: Applicant
     document_hash: str
     place: int
+    status: Status
     removed_at: date
 
     def to_dict(self) -> dict:

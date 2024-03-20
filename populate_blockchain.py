@@ -1,7 +1,7 @@
 import hashlib
 import os
 
-from models.queue import Location, LandPlot, QueueRequest, Applicant
+from models.queue import Location, LandPlot, QueueRequest, Applicant, Status
 from service.queue import QueueService
 
 from faker import Faker
@@ -79,6 +79,5 @@ def populate_blockchain(queue_service: QueueService) -> None:
         applicant = Applicant(first_name=first_name, last_name=last_name, iin=iin, phone_number=phone_number)
         land_plot = LandPlot(area=area, location=location, state=state, soil_type=soil_type)
         place = queue_service.place + 1
-        queue_request = QueueRequest(document_hash=_generate_random_hash(), land=land_plot, applicant=applicant, place=place, removed_at=None)
-        queue_service.place += 1
+        queue_request = QueueRequest(document_hash=_generate_random_hash(), land=land_plot, applicant=applicant, place=place, removed_at=None, status=Status.PENDING)
         queue_service.enqueue(queue_request.to_dict())
