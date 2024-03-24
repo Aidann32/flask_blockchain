@@ -54,5 +54,5 @@ def main():
 
 
 # TODO: Remove block by blockchain logic
-# TODO: Add statuses to request
+# Add transaction when removing request from network. Search completed transactions in other DB
 # TODO: Add validation when adding request(If request with IIN exists, if request is on right place)
