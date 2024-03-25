@@ -159,3 +159,6 @@ class BlockchainService:
 
     def find_key_by_document_hash(self, document_hash: str) -> dict:
         return self.repository.find_key_by_document_hash(document_hash)
+
+    def does_exist(self, iin: str) -> bool:
+        return self.repository.does_exist(iin)

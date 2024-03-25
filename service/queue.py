@@ -6,10 +6,18 @@ class QueueService:
         self.blockchain_service = blockchain_service
         self.place = 0
 
-    def enqueue(self, data: dict) -> None:
+    def _does_exist(self, iin: str) -> bool:
+        return self.blockchain_service.does_exist(iin)
+
+    def enqueue(self, data: dict) -> bool:
         # Validation
-        self.place += 1
-        self.blockchain_service.write_block(data, True)
+        iin = data.get('applicant', {}).get('iin')
+        if not self._does_exist(iin):
+            self.place += 1
+            self.blockchain_service.write_block(data, True)
+            return True
+        return False
+
 
     def dequeue(self):
         last_index = self.blockchain_service.get_last_index()

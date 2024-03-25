@@ -57,3 +57,14 @@ class RedisRepository:
                     return data['data']
 
         return dict()
+
+    def does_exist(self, iin: str):
+        keys = self.redis.keys()
+
+        for key in keys:
+            data = self.redis.get(key)
+            data_dict = json.loads(data)
+            if data_dict.get('data', {}).get('applicant', {}).get('iin') == iin:
+                return True
+
+        return False

@@ -17,6 +17,8 @@ def queue_main():
 @queue_blueprint.route("/request", methods=["GET", "POST"])
 def queue_request():
     if request.method == "POST":
+        message = {}
+        success = False
         if 'document' not in request.files:
             return "File is not uploaded", 400
         file = request.files['document']
@@ -45,8 +47,20 @@ def queue_request():
         land_plot = LandPlot(area=area, location=location, state=state, soil_type=soil_type)
         place = queue_service.place + 1
         queue_request = QueueRequest(document_hash=document_hash, land=land_plot, applicant=applicant, place=place)
-        queue_service.enqueue(queue_request.to_dict())
-        return redirect(url_for("queue_index"))
+        result = queue_service.enqueue(queue_request.to_dict())
+        if result:
+            message = {
+                'text': 'Заявка успешно добавлена',
+                'style': 'alert-success'
+            }
+            success = True
+        else:
+            message = {
+                'text': 'Заявка с текущим ИИН уже существует',
+                'style': 'alert-danger'
+            }
+        filled_form = True
+        return render_template("queue/request_form.html", message=message, success=success)
     return render_template("queue/request_form.html")
 
 
@@ -62,6 +76,7 @@ def search_request():
 @queue_blueprint.route("/dequeue", methods=["POST"])
 def dequeue():
     pass
+
 
 @queue_blueprint.route("/queue_view", methods=["GET", "POST"])
 def queue_view():
