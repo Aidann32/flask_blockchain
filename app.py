@@ -52,5 +52,6 @@ def main():
 
 
 # TODO: Remove block by blockchain logic
-# Add transaction when removing request from network. Search completed transactions in other DB
-# TODO: Refactor code, make right variable names, create structure for all dictionaries
+# Add separate transaction when removing request from network. Search completed transactions in other DB
+# Search place by date(remove place field from model)
+# TODO: Refactor code, make right variable names, create structure for all dictionaries(separate branch)
