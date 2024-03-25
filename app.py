@@ -9,10 +9,7 @@ from repository.redis.repository import RedisRepository
 from repository.file_storage.repository import FileRepository
 from service.blockchain import BlockchainService
 from service.queue import QueueService
-# from utils.utils import create_folder_and_file
 
-# create_folder_and_file("logger", "flask_logs.log")
-# create_folder_and_file("logger", "service_logs.log")
 
 app = Flask(__name__, template_folder='web_service/templates')
 
@@ -23,6 +20,7 @@ file_handler.setFormatter(formatter)
 app.logger.addHandler(file_handler)
 
 try:
+    # add storage of removed requests transactions
     storage = redis.Redis(host=config.REDIS_CONFIG['host'], db=config.REDIS_CONFIG['queue_db_num'], port=config.REDIS_CONFIG['port'], decode_responses=config.REDIS_CONFIG['decode_responses'])
     demo_storage = redis.Redis(host=config.REDIS_CONFIG['host'], db=config.REDIS_CONFIG['demo_db_num'], port=config.REDIS_CONFIG['port'], decode_responses=config.REDIS_CONFIG['decode_responses'])
     r = RedisRepository(storage)

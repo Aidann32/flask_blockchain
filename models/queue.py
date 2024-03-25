@@ -1,6 +1,5 @@
 from dataclasses import dataclass, asdict
 from datetime import date
-from enum import Enum
 
 
 @dataclass
@@ -40,7 +39,16 @@ class QueueRequest:
     applicant: Applicant
     document_hash: str
     place: int
-    removed_at: date
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
+@dataclass
+class QueueRemoveRequest:
+    # document_hash field of QueueRequest dataclass
+    queue_request_hash: str
+    removed_document_hash: str
 
     def to_dict(self) -> dict:
         return asdict(self)
