@@ -119,7 +119,7 @@ class BlockchainService:
     def get_next_index(self) -> int:
         return self.last_block_index + 1
 
-    def write_block(self, data: [str, dict], make_proof=False) -> None:
+    def write_block(self, data: [str, dict], rtype="", make_proof=False) -> None:
         self.logger.info(f"Writing block {data}")
         cur_index = self.get_next_index()
         prev_index = str(int(cur_index) - 1)
@@ -130,6 +130,7 @@ class BlockchainService:
             "timestamp": time(),
             "proof": -1,
             "index": cur_index,
+            "type": rtype
         }
         data_ = json.dumps(data_)
         try:
@@ -162,3 +163,6 @@ class BlockchainService:
 
     def does_exist(self, iin: str) -> bool:
         return self.repository.does_exist(iin)
+
+    def find_last_request_key(self) -> str:
+        return self.repository.find_last_request_key()

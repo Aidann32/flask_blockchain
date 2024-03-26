@@ -38,7 +38,6 @@ class QueueRequest:
     land: LandPlot
     applicant: Applicant
     document_hash: str
-    place: int
 
     def to_dict(self) -> dict:
         return asdict(self)

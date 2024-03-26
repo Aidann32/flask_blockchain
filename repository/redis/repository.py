@@ -1,6 +1,7 @@
 import hashlib
 import json
 from redis import Redis
+from datetime import datetime
 
 
 class RedisRepository:
@@ -27,7 +28,7 @@ class RedisRepository:
     def set_proof(self, block: str, index: str):
         self.redis.set(index, block)
 
-    def write_block(self, next_index: str,  data: str):
+    def write_block(self, next_index: str, data: str):
         self.redis.set(next_index, data)
 
     def delete_all_keys(self):
@@ -68,3 +69,19 @@ class RedisRepository:
                 return True
 
         return False
+
+    def find_last_request_key(self) -> str:
+        keys = self.redis.keys()
+        result = ""
+        created_at = datetime.now()
+        for key in keys:
+            data = self.redis.get(key)
+            data_dict = json.loads(data)
+            timestamp = data_dict.get('timestamp', {})
+            if timestamp:
+                created_at_request = datetime.fromtimestamp(timestamp)
+                if created_at > created_at_request:
+                    created_at = created_at_request
+                    result = key
+
+        return result

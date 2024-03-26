@@ -14,7 +14,7 @@ def index():
             return redirect(url_for("index"))
 
         make_proof = request.form.get("make_proof", False)
-        demo_service.write_block(text, make_proof)
+        demo_service.write_block(text, "NONE", make_proof)
         return redirect(url_for("index"))
     return render_template("blockchain/index.html")
 
